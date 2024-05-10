@@ -1,18 +1,16 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import "react-native-reanimated";
+import "react-native-gesture-handler";
 
 import React from "react";
-import { SafeAreaView, Text, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+
+import RootNavigation from "./routes/RootNavigation";
 
 function App(): React.JSX.Element {
   return (
-    <SafeAreaView>
-      <Text>Hello World</Text>
-    </SafeAreaView>
+    <NavigationContainer>
+      <RootNavigation />
+    </NavigationContainer>
   );
 }
 
