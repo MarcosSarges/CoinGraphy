@@ -5,10 +5,10 @@ const wss = new WebSocket.Server({ port: 1244 });
 let a = 0;
 
 wss.on("connection", (ws) => {
-  setInterval(() => {
-    a++;
-    ws.send("Welcome to the WebSocket server!   " + a);
-  }, 1000/120);
+  // setInterval(() => {
+  //   a++;
+  //   ws.send("Welcome to the WebSocket server!   " + a);
+  // }, 1000/120);
 
   ws.on("message", (message) => {
     console.log("Received:", message);
