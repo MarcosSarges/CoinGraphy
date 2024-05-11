@@ -1,11 +1,12 @@
 import React from "react";
-import * as S from "./styles";
 import { Text } from "react-native";
+import * as S from "./styles";
 
 const HomeContainer = () => {
   return (
     <S.Container>
-      <Text>acv</Text>
+      <Text onPress={() => {}}>acv</Text>
+      <Text></Text>
     </S.Container>
   );
 };
