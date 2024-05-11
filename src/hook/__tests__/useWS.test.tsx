@@ -90,4 +90,25 @@ describe("useWS", () => {
     await waitFor(() => expect(result.current.status).toBe(WsStatus.OPEN));
     expect(ws).toReceiveMessage(message);
   });
+  it("should return last message string", async () => {
+    const { result } = renderHook(() => useWS({ url }));
+    await act(async () => {
+      await ws.connected;
+    });
+    const message = JSON.stringify({ message: "Hello" });
+    act(() => ws.server.emit("message", message));
+    await waitFor(() => expect(result.current.status).toBe(WsStatus.OPEN));
+    expect(result.current.lastMessage).toBe(message);
+  });
+  it("should return last message json", async () => {
+    const { result } = renderHook(() => useWS({ url }));
+    await act(async () => {
+      await ws.connected;
+    });
+    const data = { message: "Hello" };
+    const message = JSON.stringify(data);
+    act(() => ws.server.emit("message", message));
+    await waitFor(() => expect(result.current.status).toBe(WsStatus.OPEN));
+    expect(result.current.lastJsonMessage).toEqual(data);
+  });
 });
