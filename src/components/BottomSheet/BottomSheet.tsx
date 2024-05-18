@@ -1,31 +1,24 @@
-import Input from "@components/Input";
+/* eslint-disable react-native/no-inline-styles */
 import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
   useState,
 } from "react";
-import {
-  FlatList,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-  useWindowDimensions,
-} from "react-native";
+import { View, useWindowDimensions } from "react-native";
 import Animated, {
-  BounceOut,
+  CurvedTransition,
   Easing,
   FadeIn,
-  LightSpeedInRight,
-  LinearTransition,
-  SequencedTransition,
-  ZoomOutDown,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 import { useDebounce } from "use-debounce";
+import Material from "react-native-vector-icons/MaterialCommunityIcons";
+import { Input, Typography } from "@components";
+
+import * as S from "./styles";
 
 export interface IOption {
   title: string;
@@ -61,35 +54,33 @@ const BottomSheet: React.ForwardRefRenderFunction<
       transform: [
         {
           translateY: withTiming(translateY.value, {
-            duration: 1000,
+            duration: 800,
+            easing: Easing.linear,
           }),
         },
       ],
     };
   });
 
-  const transition = SequencedTransition.delay(1000);
-
-  useEffect(() => {
-    setFiltered(options);
-  }, [options]);
+  const transition = CurvedTransition.easingY(Easing.elastic(1.5));
 
   useEffect(() => {
     if (visible) {
       translateY.value = 0;
     } else {
-      translateY.value = height;
+      translateY.value = height * 2;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   useImperativeHandle(ref, () => ({
     show() {
-      setVisible(true);
+      setVisible(!visible);
     },
   }));
 
   useEffect(() => {
-    if (!!searchTermDebouce) {
+    if (searchTermDebouce) {
       const filteredOptions = options.filter((option) =>
         option.title.toLowerCase().includes(searchTermDebouce.toLowerCase())
       );
@@ -97,46 +88,34 @@ const BottomSheet: React.ForwardRefRenderFunction<
     } else {
       setFiltered(options);
     }
-  }, [searchTermDebouce]);
+  }, [options, searchTermDebouce]);
 
   return (
-    <Animated.View
-      style={[
-        {
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: height / 2,
-          backgroundColor: "#1E1E1E",
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
-          paddingTop: 16,
-        },
-        style,
-      ]}
-    >
+    <Animated.View style={[S.containerStyle(height), style]}>
       {visible && (
-        <Animated.View entering={FadeIn}>
-          <Text
-            style={{
-              textAlign: "center",
-              fontSize: 20,
-              fontWeight: "800",
-              marginBottom: 8,
-              color: "white",
-            }}
-          >
+        <Animated.View
+          entering={FadeIn}
+          style={{ position: "relative", marginBottom: 8 }}
+        >
+          <Typography size="xl" light textAlign="center" fontWeight="600">
             {title}
-          </Text>
+          </Typography>
+          <Material
+            onPress={() => setVisible(false)}
+            name="close"
+            size={24}
+            color={"#FFF"}
+            style={{ right: 16, position: "absolute" }}
+          />
         </Animated.View>
       )}
       {visible && enableFilter && (
-        <Animated.View entering={FadeIn}>
+        <Animated.View entering={FadeIn} style={{ marginBottom: 8 }}>
           <Input
             light
+            uppercase
             placeholder="Pesquise o TOKEN"
-            onChangeText={(searchTerm) => setSearchTerm(searchTerm)}
+            onChangeText={(_searchTerm) => setSearchTerm(_searchTerm)}
           />
         </Animated.View>
       )}
@@ -147,33 +126,21 @@ const BottomSheet: React.ForwardRefRenderFunction<
           data={filtered}
           renderItem={({ item }) => {
             return (
-              <Animated.View
-                entering={LightSpeedInRight.delay(200 * 2).springify()}
-                exiting={BounceOut}
-                layout={transition}
-              >
-                <TouchableOpacity
-                  style={{
-                    width: "100%",
-                    padding: 10,
-                    height: 50,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
+              <Animated.View layout={transition}>
+                <S.ButtonItem
                   onPress={() => {
                     setVisible(false);
                     onSelect(item.value);
                   }}
                 >
-                  <Image
-                    style={{ height: 30, width: 30, marginRight: 16 }}
-                    source={{ uri: item.icon }}
-                  />
+                  <S.ImgCoin source={{ uri: item.icon }} />
                   <View>
-                    <Text>{item.title}</Text>
-                    <Text style={{ fontSize: 12 }}>{item.label}</Text>
+                    <Typography light>{item.title}</Typography>
+                    <Typography light size="sm">
+                      {item.label}
+                    </Typography>
                   </View>
-                </TouchableOpacity>
+                </S.ButtonItem>
               </Animated.View>
             );
           }}

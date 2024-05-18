@@ -1,14 +1,10 @@
 import { TPropWithTheme } from "@styles/index";
-import { TextInputProps } from "react-native";
 import styled from "styled-components/native";
-
-interface IInputProps {
-  light?: boolean;
-}
+import { IInputProps } from "./Input";
 
 export const Container = styled.TextInput.attrs(
   ({ theme, light }: TPropWithTheme<IInputProps>) => ({
-    placeholderTextColor: theme.colors.text[light ? "light" : "default"],
+    placeholderTextColor: theme.colors.commons.gray[light ? "300" : "800"],
   })
 )<IInputProps>`
   padding-horizontal: ${({ theme }) => theme.spacings.md};
@@ -20,4 +16,5 @@ export const Container = styled.TextInput.attrs(
   align-self: center;
   border-bottom-width: 1px;
   border-bottom-color: ${({ theme }) => theme.colors.commons.gray[400]};
+  text-transform: ${({ uppercase }) => (uppercase ? "uppercase" : "none")};
 `;

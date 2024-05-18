@@ -23,7 +23,9 @@ const useWS = ({ url, onOpen, onMessage, onClose, onError }: IUseWS) => {
   const wsRef = useRef<WebSocket | null>(null);
 
   const getInstanceWS = (url: string) => {
-    if (wsRef.current) return wsRef.current;
+    if (wsRef.current) {
+      return wsRef.current;
+    }
     wsRef.current = new WebSocket(url);
     return wsRef.current;
   };
@@ -34,9 +36,11 @@ const useWS = ({ url, onOpen, onMessage, onClose, onError }: IUseWS) => {
       onMessage && onMessage(event.data, event);
       setLastMessage(event.data);
       try {
-        if (typeof event.data === "string")
+        if (typeof event.data === "string") {
           setLastJsonMessage(JSON.parse(event.data));
-        else setLastJsonMessage(event.data);
+        } else {
+          setLastJsonMessage(event.data);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -62,10 +66,14 @@ const useWS = ({ url, onOpen, onMessage, onClose, onError }: IUseWS) => {
   }, []);
 
   const sendMessage = (message: string) => {
-    wsRef.current?.send(message);
+    try {
+      wsRef.current?.send(message);
+    } catch (error) {
+      console.log(error);
+    }
   };
   const sendJsonMessage = (message: Object | Array<any>) => {
-    wsRef.current?.send(JSON.stringify({ data: message }));
+    wsRef.current?.send(JSON.stringify(message));
   };
 
   return useMemo(

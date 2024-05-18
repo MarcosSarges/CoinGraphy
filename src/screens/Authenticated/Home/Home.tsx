@@ -4,7 +4,6 @@ import listAllSymbols from "@services/binance/listAllSymbols";
 import ISymbol from "@interfaces/ISymbol";
 import getAllAssets from "@services/binance/getAllAssets";
 import IAsset from "@interfaces/IAsset";
-import BottomSheet from "@components/BottomSheet";
 
 const Home = () => {
   const [trackSymbolSelected, setTrackSymbolSelected] =

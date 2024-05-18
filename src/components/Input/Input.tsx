@@ -2,8 +2,9 @@ import React from "react";
 import * as S from "./styles";
 import { TextInputProps } from "react-native";
 
-interface IInputProps extends TextInputProps {
+export interface IInputProps extends TextInputProps {
   light?: boolean;
+  uppercase?: boolean;
 }
 
 const Input: React.FC<IInputProps> = (props) => {

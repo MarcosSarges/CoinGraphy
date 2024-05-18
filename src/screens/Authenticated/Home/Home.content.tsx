@@ -1,27 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
-import * as S from "./styles";
+import { Button } from "react-native";
+
 import {
   VictoryAxis,
   VictoryBar,
   VictoryCandlestick,
   VictoryChart,
+  VictoryLine,
   VictoryTheme,
 } from "victory-native";
 import type { SharedValue } from "react-native-reanimated";
-import useWS from "@hooks/useWS";
+import useWS, { WsStatus } from "@hooks/useWS";
 import ISymbol from "@interfaces/ISymbol";
 import IAsset from "@interfaces/IAsset";
 import Header from "./components/Header";
-import BottomSheet from "@components/BottomSheet";
-import { Button } from "react-native";
-import { IBottomSheetRef } from "@components/BottomSheet/BottomSheet";
+import { BottomSheet, IBottomSheetRef } from "@components";
+
+import * as S from "./styles";
+
 import formattedOptions from "./helpers/formattedOptions";
 
 const data = [
-  { quarter: 1, earnings: 13000 },
-  { quarter: 2, earnings: 16500 },
-  { quarter: 3, earnings: 14250 },
-  { quarter: 4, earnings: 19000 },
+  { time: 1, price: 13000 },
+  { time: 2, price: 16500 },
+  { time: 3, price: 14250 },
+  { time: 4, price: 19000 },
 ];
 
 const data2 = [
@@ -72,7 +75,63 @@ const HomeContent: React.FC<IHomeProp> = ({
   onSelectSymbol,
 }) => {
   const bottomSheetRef = useRef<null | IBottomSheetRef>(null);
+  const [dataState, setDataState] = useState([]);
+  // {"e":"index","E":1716061778045,"s":"BTCUSDT","p":"66864.94255319"} {"data": "{\"e\":\"index\",\"E\":1716061778045,\"s\":\"BTCUSDT\",\"p\":\"66864.94255319\"}", "isTrusted": false}
+  const { sendJsonMessage, sendMessage, status } = useWS({
+    url: `wss://nbstream.binance.com/eoptions/ws`,
+    onMessage(message, event) {
+      console.log(message);
+      const parsed = JSON.parse(message);
+      console.log(parsed);
 
+      if (!parsed?.e) {
+        if (!parsed.result) {
+          return;
+        }
+      }
+      const time = new Date(parsed.E);
+      const formatted = {
+        time: `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`,
+        price: parseFloat(parsed.p).toFixed(2),
+      };
+      setDataState((prev) => {
+        const old = [...prev].slice(
+          prev.length - 5 < 0 ? 0 : prev.length - 5,
+          prev.length
+        );
+        return [...old, formatted];
+      });
+    },
+    onOpen() {
+      console.log("open");
+    },
+    onClose() {
+      console.log("closing");
+    },
+    onError(msg, ev) {
+      console.log("error");
+      console.log(msg, ev);
+    },
+  });
+
+  useEffect(() => {
+    if (symbolSelected && status === WsStatus.OPEN) {
+      // sendMessage(
+      //   JSON.stringify({
+      //     method: "LIST_SUBSCRIPTIONS",
+      //     id: 19939393993930,
+      //   })
+      // );
+      sendMessage(
+        JSON.stringify({
+          method: "SUBSCRIBE",
+          params: [`${symbolSelected.symbol}@index`],
+          id: 19939393993930,
+        })
+      );
+    }
+  }, [symbolSelected, status]);
+  // wss://ws-api.binance.com:443/ws-api/v3
   return (
     <S.Container>
       <Header
@@ -83,9 +142,12 @@ const HomeContent: React.FC<IHomeProp> = ({
         }}
       />
 
-      {/* <VictoryChart width={350} theme={VictoryTheme.material}>
-        <VictoryBar data={data} x="quarter" y="earnings" />
-      </VictoryChart> */}
+      <VictoryChart
+        animate
+        style={{ parent: { paddingLeft: 16, paddingRight: 16 } }}
+      >
+        <VictoryLine data={dataState} x="time" y="price" />
+      </VictoryChart>
       {/* <VictoryChart
         theme={VictoryTheme.material}
         domainPadding={{ x: 25 }}

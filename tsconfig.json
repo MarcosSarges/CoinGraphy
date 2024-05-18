@@ -7,7 +7,7 @@
       "@services/*": ["./src/services/*"],
       "@screens/*": ["./src/screens/*"],
       "@routes/*": ["./src/routes/*"],
-      "@components/*": ["./src/components/*"],
+      "@components": ["./src/components"],
       "@styles/*": ["./src/styles/*"],
       "@styles": ["./src/styles"],
       "@hooks/*": ["./src/hooks/*"],

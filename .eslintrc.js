@@ -2,11 +2,11 @@ module.exports = {
   root: true,
   extends: "@react-native",
   rules: {
-    quotes: "double",
+    quotes: 0,
+    "no-unused-vars": ["warn"],
   },
   overrides: [
     {
-      // Test files only
       files: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
       extends: ["plugin:testing-library/react"],
     },

@@ -26,8 +26,6 @@ const Header: React.FC<IHeaderProps> = ({
     currentPrice: 0,
   });
 
-  console.log({ symbolSelected });
-
   useWS({
     url: "",
     onMessage(message, event) {
