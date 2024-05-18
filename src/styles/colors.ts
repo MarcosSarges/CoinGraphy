@@ -1,3 +1,16 @@
+type Colors = typeof colors;
+
+export type ColorKeys = {
+  [K1 in keyof Colors]: {
+    [K2 in keyof Colors[K1]]: Colors[K1][K2] extends object
+      ? {
+          [K3 in keyof Colors[K1][K2]]: `${K1 & string}.${K2 & string}.${K3 &
+            string}`;
+        }[keyof Colors[K1][K2]]
+      : `${K1 & string}.${K2 & string}`;
+  }[keyof Colors[K1]];
+}[keyof Colors];
+
 const windsor = {
   "800": "#7617b2",
   "900": "#61148f",
@@ -47,7 +60,7 @@ const colors = {
     light: white[0],
   },
   background: {
-    default: white[100],
+    default: black[0],
   },
   commons: {
     black: black[0],

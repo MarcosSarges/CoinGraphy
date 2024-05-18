@@ -1,0 +1,36 @@
+export default interface IAsset {
+  id: string;
+  assetCode: string;
+  assetName: string;
+  unit: string;
+  commissionRate: number;
+  freeAuditWithdrawAmt: number;
+  freeUserChargeAmount: number;
+  createTime: number;
+  test: number;
+  gas: any;
+  isLegalMoney: boolean;
+  reconciliationAmount: number;
+  seqNum: string;
+  chineseName: string;
+  cnLink: string;
+  enLink: string;
+  logoUrl: string;
+  fullLogoUrl: string;
+  supportMarket: any;
+  feeReferenceAsset: any;
+  feeRate: any;
+  feeDigit: number;
+  assetDigit: number;
+  trading: boolean;
+  tags: string[];
+  plateType: string;
+  etf: boolean;
+  isLedgerOnly: boolean;
+  delisted: boolean;
+  preDelist: boolean;
+  pdTradeDeadline: any;
+  pdDepositDeadline: any;
+  pdAnnounceUrl: any;
+  tagBits: string;
+}

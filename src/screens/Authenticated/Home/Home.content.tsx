@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as S from "./styles";
 import {
   VictoryAxis,
@@ -9,6 +9,13 @@ import {
 } from "victory-native";
 import type { SharedValue } from "react-native-reanimated";
 import useWS from "@hooks/useWS";
+import ISymbol from "@interfaces/ISymbol";
+import IAsset from "@interfaces/IAsset";
+import Header from "./components/Header";
+import BottomSheet from "@components/BottomSheet";
+import { Button } from "react-native";
+import { IBottomSheetRef } from "@components/BottomSheet/BottomSheet";
+import formattedOptions from "./helpers/formattedOptions";
 
 const data = [
   { quarter: 1, earnings: 13000 },
@@ -49,36 +56,36 @@ const data2 = [
 //   }
 // }
 
-const HomeContent = () => {
-  const [dataState, setData] = useState([]);
+interface IHomeProp {
+  listSymbols: ISymbol[];
+  listAssets: IAsset[];
+  symbolSelected: ISymbol | null;
+  assetSelected: IAsset | null;
+  onSelectSymbol: (symbol: ISymbol) => void;
+}
 
-  // useWS({
-  //   url: "wss://stream.binance.com:9443/ws/bnbbtc@kline_1m",
-  //   onMessage: (msg) => {
-  //     const data = JSON.parse(msg);
-  //     console.log(data.k.x);
-
-  //     if (!data.k.x) return;
-
-  //     const parsed = {
-  //       // ...data.k,
-  //       x: new Date(data.k.T),
-  //       open: Number(data.k.o),
-  //       close: Number(data.k.c),
-  //       high: Number(data.k.h),
-  //       low: Number(data.k.l),
-  //     };
-  //     console.log(parsed);
-
-  //     data.k && setData((prev) => [...prev, parsed]);
-  //   },
-  // });
+const HomeContent: React.FC<IHomeProp> = ({
+  listAssets,
+  listSymbols,
+  symbolSelected,
+  assetSelected,
+  onSelectSymbol,
+}) => {
+  const bottomSheetRef = useRef<null | IBottomSheetRef>(null);
 
   return (
     <S.Container>
-      <VictoryChart width={350} theme={VictoryTheme.material}>
+      <Header
+        symbolSelected={symbolSelected}
+        assetSelected={assetSelected}
+        onPress={() => {
+          bottomSheetRef.current!.show();
+        }}
+      />
+
+      {/* <VictoryChart width={350} theme={VictoryTheme.material}>
         <VictoryBar data={data} x="quarter" y="earnings" />
-      </VictoryChart>
+      </VictoryChart> */}
       {/* <VictoryChart
         theme={VictoryTheme.material}
         domainPadding={{ x: 25 }}
@@ -109,6 +116,14 @@ const HomeContent = () => {
           data={dataState}
         />
       </VictoryChart> */}
+      <Button title="teste" onPress={() => bottomSheetRef.current!.show()} />
+      <BottomSheet
+        ref={bottomSheetRef}
+        title="Selecione um ativo"
+        onSelect={onSelectSymbol}
+        options={formattedOptions(listSymbols, listAssets)}
+        enableFilter
+      />
     </S.Container>
   );
 };

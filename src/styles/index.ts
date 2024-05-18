@@ -10,4 +10,8 @@ export type TypeTheme = {
   sizes: typeof sizes;
 };
 
-export const theme: TypeTheme = { fonts, colors, spacings, sizes };
+const theme: TypeTheme = { fonts, colors, spacings, sizes };
+
+export type TPropWithTheme<T> = { theme: TypeTheme } & T;
+
+export default theme;

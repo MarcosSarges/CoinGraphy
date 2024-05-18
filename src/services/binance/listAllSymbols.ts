@@ -1,3 +1,13 @@
-// import
+import http from "@config/http";
+import APIBinance from "@constants/APIBinance";
+import ISymbol from "@interfaces/ISymbol";
 
-// bapi/asset/v2/public/asset/asset/get-all-asset
+const listAllSymbols = async () => {
+  return http
+    .get<{
+      symbols: ISymbol[];
+    }>(`${APIBinance.API_V3}${APIBinance.EXCHANGE_INFO}`)
+    .then((response) => response.data);
+};
+
+export default listAllSymbols;
